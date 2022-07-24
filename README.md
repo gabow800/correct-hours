@@ -15,7 +15,7 @@ Unzip file.
 
 Go to the unzipped location in the command line:
 ```bash
-cd /unzip/location 
+cd C:\Users\user\Downloads\correct-hours 
 ```
 
 Install project dependencies
@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
 Run project with the location of your Excel files:
 
 ```bash
-python3 main.py /excel/files/location
+python3 main.py -d C:\Users\user\Downloads\excel-files
 ```
 
 The project will generate a folder `output` in the same location with a copy of the files corrected.
