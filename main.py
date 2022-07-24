@@ -1,12 +1,17 @@
-import sys
 from pathlib import Path
-
 from workbook_processor import WorkbookProcessor
+from argparse import ArgumentParser
 
-input_folder = sys.argv[1]
+
+parser = ArgumentParser()
+parser.add_argument("-d", "--directory", dest="directory", help="Location of Excel files", type=str)
+
+args = parser.parse_args()
+directory = args.directory
+
 # create output folder
-Path(f"{input_folder}/output").mkdir(parents=True, exist_ok=True)
-files = Path(input_folder).glob('*')
+Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
+files = Path(directory).glob('*')
 for f in files:
     if f.is_file():
         filepath = f.absolute()
