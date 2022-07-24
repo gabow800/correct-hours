@@ -1,5 +1,6 @@
 from workbook_processor import WorkbookProcessor
 
-filepath ="timesheets/callum.xlsx"
-processor = WorkbookProcessor(filepath)
+filepath = "input/callum.xlsx"
+output_folder = "output"
+processor = WorkbookProcessor(filepath, output_folder)
 processor.process()

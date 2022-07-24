@@ -5,19 +5,17 @@ from openpyxl.styles import Font
 
 class WorkbookProcessor:
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, output_folder):
         self.filepath = filepath
-        self.filename = None
-        self.file_extension = None
+        self.output_folder = output_folder
         self.workbook = load_workbook(filename=self.filepath)
         self.original_sheet = self.workbook.active
         self.new_sheet = self.workbook.copy_worksheet(from_worksheet=self.original_sheet)
-        self.extract_filename_and_extension()
 
-    def extract_filename_and_extension(self):
+    def get_new_file_name(self):
         filename, file_extension = os.path.splitext(self.filepath)
-        self.filename = filename
-        self.file_extension = file_extension
+        filename_only = filename.split("/")[-1]
+        return f"{self.output_folder}/{filename_only}_copy{file_extension}"
 
     def add_new_column_headings(self):
         # new column headings
@@ -82,4 +80,4 @@ class WorkbookProcessor:
     def process(self):
         self.add_new_column_headings()
         self.process_rows()
-        self.workbook.save(filename=f"{self.filename}_copy{self.file_extension}")
+        self.workbook.save(filename=self.get_new_file_name())
