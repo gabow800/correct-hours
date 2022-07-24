@@ -1,21 +1,20 @@
-import os.path
+from pathlib import Path
+
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
 
 class WorkbookProcessor:
 
-    def __init__(self, filepath, output_folder):
+    def __init__(self, filepath):
         self.filepath = filepath
-        self.output_folder = output_folder
         self.workbook = load_workbook(filename=self.filepath)
         self.original_sheet = self.workbook.active
         self.new_sheet = self.workbook.copy_worksheet(from_worksheet=self.original_sheet)
 
     def get_new_file_name(self):
-        filename, file_extension = os.path.splitext(self.filepath)
-        filename_only = filename.split("/")[-1]
-        return f"{self.output_folder}/{filename_only}_copy{file_extension}"
+        path = Path(self.filepath)
+        return f"{path.parent.absolute()}/output/copy_{path.name}"
 
     def add_new_column_headings(self):
         # new column headings
@@ -33,11 +32,11 @@ class WorkbookProcessor:
             total = row[13]
             total_hours += total
             rows_added += 1
-        print(f"Total hours for {current_week_ending} is {total_hours} within {rows_added} rows")
+        # print(f"Total hours for {current_week_ending} is {total_hours} within {rows_added} rows")
         return rows_added, total_hours
 
     def correct_hours(self, row_start, row_offset, overtime):
-        print("Hours need to be corrected")
+        # print("Hours need to be corrected")
         time_left = overtime
         for col_idx in range(13, 7, -1):
             for row_idx in range((row_start + row_offset) - 1, row_start - 1, -1):
