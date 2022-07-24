@@ -1,4 +1,0 @@
-
-
-WEEK_ENDING = 1
-EMPLOYEE = 2
