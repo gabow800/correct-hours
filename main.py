@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 
 parser = ArgumentParser()
-parser.add_argument("-d", "--directory", dest="directory", help="Location of Excel files", type=str)
+parser.add_argument("directory", help="Location of Excel files", type=str)
 
 args = parser.parse_args()
 directory = args.directory
@@ -14,8 +14,8 @@ Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
 files = Path(directory).glob('*')
 for f in files:
     if f.is_file():
-        filepath = f.absolute()
         if not str.startswith(f.name, "~"):
+            filepath = f.absolute()
             print(f"Processing file {filepath}...")
             processor = WorkbookProcessor(filepath)
             processor.process()

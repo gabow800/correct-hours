@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
 Run project with the location of your Excel files:
 
 ```bash
-python3 main.py -d C:\Users\user\Downloads\excel-files
+python3 main.py C:\Users\user\Downloads\excel-files
 ```
 
 The project will generate a folder `output` in the same location with a copy of the files corrected.
