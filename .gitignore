@@ -2,3 +2,4 @@
 .venv/
 files/
 original_files/
+dist/
