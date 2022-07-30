@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from openpyxl.styles import Font
 
 

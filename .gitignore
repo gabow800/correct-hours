@@ -1,4 +1,7 @@
 .idea/
 .venv/
+dist/
 files/
 original_files/
+*.egg-info/
+
