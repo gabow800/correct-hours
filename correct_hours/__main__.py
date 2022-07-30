@@ -15,6 +15,7 @@ def get_new_file_name(filepath):
     path = Path(filepath)
     return f"{path.parent.absolute()}/output/copy_{path.name}"
 
+
 # create output folder
 Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
 files = Path(directory).glob('*')
@@ -29,4 +30,3 @@ for f in files:
             new_file_name = get_new_file_name(filepath)
             workbook.save(filename=new_file_name)
             print(f"Finished processing file. Created file {new_file_name}.")
-
