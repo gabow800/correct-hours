@@ -2,3 +2,6 @@
 .venv/
 files/
 original_files/
+dist/
+tests/data/output
+tests/data/~*.xlsx
