@@ -1,7 +1,7 @@
 from openpyxl.styles import Font
 
 
-class WorkbookProcessor:
+class XeroReportProcessor:
 
     def __init__(self, workbook):
         self.workbook = workbook
