@@ -1,20 +1,12 @@
-from pathlib import Path
-
-from openpyxl import load_workbook
 from openpyxl.styles import Font
 
 
 class WorkbookProcessor:
 
-    def __init__(self, filepath):
-        self.filepath = filepath
-        self.workbook = load_workbook(filename=self.filepath)
+    def __init__(self, workbook):
+        self.workbook = workbook
         self.original_sheet = self.workbook.active
         self.new_sheet = self.workbook.copy_worksheet(from_worksheet=self.original_sheet)
-
-    def get_new_file_name(self):
-        path = Path(self.filepath)
-        return f"{path.parent.absolute()}/output/copy_{path.name}"
 
     def add_new_column_headings(self):
         # new column headings
@@ -79,4 +71,3 @@ class WorkbookProcessor:
     def process(self):
         self.add_new_column_headings()
         self.process_rows()
-        self.workbook.save(filename=self.get_new_file_name())
