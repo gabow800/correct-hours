@@ -1,3 +1,4 @@
+from correct_hours.report_processors.types import UnsupportedReportType
 
 
 class MyobReportProcessor:
@@ -6,5 +7,5 @@ class MyobReportProcessor:
         self.workbook = workbook
 
     def process(self):
-        pass
+        raise UnsupportedReportType("myob")
     
