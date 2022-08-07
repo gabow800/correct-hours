@@ -39,30 +39,34 @@ def assert_cell_values(new_sheet, cells):
 
 
 def test_process_file():
-    workbook = load_workbook("tests/data/xero-report.xlsx")
-    processor = XeroReportProcessor(workbook)
+    hours_workbook = load_workbook("tests/data/xero-report.xlsx")
+    rates_workbook = load_workbook("tests/data/rates.xlsx")
+    processor = XeroReportProcessor(hours_workbook, rates_workbook)
     processor.process()
     Path(f"tests/data/output").mkdir(parents=True, exist_ok=True)
-    workbook.save(filename="tests/data/output/copy-xero-report.xlsx")
-    old_sheet = workbook.get_sheet_by_name("Timesheet Details")
-    new_sheet = workbook.get_sheet_by_name("Timesheet Details Copy")
+    hours_workbook.save(filename="tests/data/output/copy-xero-report.xlsx")
+    old_sheet = hours_workbook["Timesheet Details"]
+    new_sheet = hours_workbook["Timesheet Details Copy"]
     # Asert old total, new total and days worked
     assert_cell_values(new_sheet, [
         # 1/12/2020 rows
-        ("O8", 47),
-        ("P8", "=SUM(G6:M8)"),
+        ("O6", "=SUM(G6:M6)"),
+        ("O7", "=SUM(G7:M7)"),
+        ("O8", "=SUM(G8:M8)"),
+        ("P8", "=SUM(O6:O8)"),
         ("Q8", "=P8/7.6"),
         # 2/12/2020 rows
-        ("O9", 32),
-        ("P9", "=SUM(G9:M9)"),
+        ("O9", "=SUM(G9:M9)"),
+        ("P9", "=SUM(O9:O9)"),
         ("Q9", "=P9/7.6"),
         # 3/12/2020 rows
-        ("O11", 34),
-        ("P11", "=SUM(G10:M11)"),
+        ("O10", "=SUM(G10:M10)"),
+        ("O11", "=SUM(G11:M11)"),
+        ("P11", "=SUM(O10:O11)"),
         ("Q11", "=P11/7.6"),
         # 4/12/2020 rows
-        ("O12", 40),
-        ("P12", "=SUM(G12:M12)"),
+        ("O12", "=SUM(G12:M12)"),
+        ("P12", "=SUM(O12:O12)"),
         ("Q12", "=P12/7.6"),
     ])
     # Assert corrected hours process

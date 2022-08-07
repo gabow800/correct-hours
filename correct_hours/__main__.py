@@ -27,6 +27,14 @@ def get_new_file_name(filepath):
     return f"{path.parent.absolute()}/output/copy_{path.name}"
 
 
+def should_ignore_file(file: Path) -> bool:
+    filename = file.name
+    return (
+        str.startswith(filename, "~") or
+        filename == 'rates.xlsx'
+    )
+
+
 class InvalidReportType(Exception):
     pass
 
@@ -36,12 +44,13 @@ Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
 files = Path(directory).glob('*')
 for f in files:
     if f.is_file():
-        if not str.startswith(f.name, "~"):
+        if not should_ignore_file(f):
             filepath = f.absolute()
             print(f"Processing file {filepath}...")
             workbook = load_workbook(filename=filepath)
             if report_type == 'xero':
-                processor = XeroReportProcessor(workbook)
+                rates_workbook = load_workbook(filename=f"{directory}/rates.xlsx")
+                processor = XeroReportProcessor(workbook, rates_workbook)
             elif report_type == 'myob':
                 processor = MyobReportProcessor(workbook)
             else:
