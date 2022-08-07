@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from openpyxl.styles import Font
 
 from correct_hours.report_processors.xero.rate_processor import XeroRateProcessor
@@ -69,7 +67,8 @@ class XeroReportProcessor:
             date = row[0]
             rate_label = row[3]
             rate = rate_processor.get_rate(rate_label, date)
-            self.new_hours_sheet.cell(row_number, 18, f"=O{row_number}*{rate}")
+            rate_cell = self.new_hours_sheet.cell(row_number, 18, f"=O{row_number}*{rate}")
+            rate_cell.style = 'Currency'
             if row_number <= rows_processed_count:
                 # skip the rows of the same day
                 continue
@@ -88,7 +87,9 @@ class XeroReportProcessor:
             if did_overtime:
                 new_total_of_hours.font = Font(bold=True, color="FF0000")
             # number of days worked
-            self.new_hours_sheet.cell(last_row_number, 17, f"=P{last_row_number}/7.6")
+            days_worked_cell = self.new_hours_sheet.cell(last_row_number, 17, f"=P{last_row_number}/7.6")
+            days_worked_cell.style = 'Comma [0]'
+
             rows_processed_count += rows_added_count
 
 
