@@ -2,7 +2,7 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 
-from correct_hours.workbook_processor import WorkbookProcessor
+from correct_hours.report_processors.xero import XeroReportProcessor
 
 HOUR_COLUMN_NAMES = ["G", "H", "I", "J", "K", "L", "M", "N"]
 HOUR_START_ROW = 6
@@ -39,11 +39,11 @@ def assert_cell_values(new_sheet, cells):
 
 
 def test_process_file():
-    workbook = load_workbook("tests/data/timesheet-david.xlsx")
-    processor = WorkbookProcessor(workbook)
+    workbook = load_workbook("tests/data/xero-report.xlsx")
+    processor = XeroReportProcessor(workbook)
     processor.process()
     Path(f"tests/data/output").mkdir(parents=True, exist_ok=True)
-    workbook.save(filename="tests/data/output/copy-timesheet-david.xlsx")
+    workbook.save(filename="tests/data/output/copy-xero-report.xlsx")
     old_sheet = workbook.get_sheet_by_name("Timesheet Details")
     new_sheet = workbook.get_sheet_by_name("Timesheet Details Copy")
     # Asert old total, new total and days worked

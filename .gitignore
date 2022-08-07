@@ -1,6 +1,7 @@
 .idea/
 .venv/
-files/
+examples/*/~*.xlsx
+examples/*/output/
 original_files/
 dist/
 tests/data/output
