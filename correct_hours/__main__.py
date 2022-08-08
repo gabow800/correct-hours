@@ -4,6 +4,7 @@ from pathlib import Path
 
 from correct_hours.report_processors.myob import MyobReportProcessor
 from correct_hours.report_processors.xero import XeroReportProcessor
+from correct_hours.types import RateFileNotFound
 
 parser = ArgumentParser()
 parser.add_argument("directory", help="Location of Excel files", type=str)
@@ -49,8 +50,13 @@ for f in files:
             filepath = f.absolute()
             print(f"Processing file {filepath}...")
             workbook = load_workbook(filename=filepath)
+            # load rates workbook
+            rates_filepath = f"{directory}/rates.xlsx"
             if report_type == 'xero':
-                rates_workbook = load_workbook(filename=f"{directory}/rates.xlsx")
+                try:
+                    rates_workbook = load_workbook(filename=rates_filepath)
+                except FileNotFoundError:
+                    raise RateFileNotFound(rates_filepath)
                 processor = XeroReportProcessor(workbook, rates_workbook)
             elif report_type == 'myob':
                 processor = MyobReportProcessor(workbook)

@@ -1,6 +1,6 @@
 from openpyxl import Workbook
 
-from correct_hours.report_processors.types import UnsupportedReportType
+from correct_hours.types import UnsupportedReportType
 
 
 class MyobReportProcessor:

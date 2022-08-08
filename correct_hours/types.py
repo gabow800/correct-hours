@@ -25,3 +25,14 @@ class RateNotFound(CorrectHoursError):
             "Make sure the rates file has an entry for this combination. "
             "Also make sure the entry in the rate file doesn't have any trailing spaces."
         )
+
+
+@dataclasses.dataclass
+class RateFileNotFound(CorrectHoursError):
+    rate_filePath: str
+
+    def __str__(self) -> str:
+        return (
+            f"Rate file not found in this location: \"{self.rate_filePath}\". "
+            "Please make sure you have a file \"rates.xls\" in the same directory where your reports are located."
+        )

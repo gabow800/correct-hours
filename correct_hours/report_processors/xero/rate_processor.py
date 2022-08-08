@@ -4,7 +4,7 @@ from typing import Optional
 
 from openpyxl import Workbook
 
-from correct_hours.report_processors.types import RateNotFound
+from correct_hours.types import RateNotFound
 
 ROWS_OFFSET = 2
 COLS_OFFSET = 3
