@@ -1,11 +1,13 @@
-from correct_hours.report_processors.types import UnsupportedReportType
+from openpyxl import Workbook
+
+from correct_hours.types import UnsupportedReportType
 
 
 class MyobReportProcessor:
 
-    def __init__(self, workbook):
+    def __init__(self, workbook: Workbook) -> None:
         self.workbook = workbook
 
-    def process(self):
+    def process(self) -> None:
         raise UnsupportedReportType("myob")
     

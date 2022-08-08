@@ -6,3 +6,4 @@ original_files/
 dist/
 tests/data/output
 tests/data/~*.xlsx
+__pycache__/
