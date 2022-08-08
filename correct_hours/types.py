@@ -1,6 +1,10 @@
 import dataclasses
 from datetime import datetime
 
+RATES_FILENAME = "rates.xlsx"
+OUTPUT_FOLDER = "output"
+HOURS_NEW_FILE_PREFIX = "copy_"
+
 
 class CorrectHoursError(Exception):
     pass
@@ -34,5 +38,14 @@ class RateFileNotFound(CorrectHoursError):
     def __str__(self) -> str:
         return (
             f"Rate file not found in this location: \"{self.rate_filePath}\". "
-            "Please make sure you have a file \"rates.xls\" in the same directory where your reports are located."
+            f"Please make sure you have a file \"{RATES_FILENAME}\" in the same directory where your "
+            f"reports are located."
         )
+
+
+@dataclasses.dataclass
+class InvalidReportType(CorrectHoursError):
+    report_type: str
+
+    def __str__(self):
+        return f"Invalid report type provided: {self.report_type}"

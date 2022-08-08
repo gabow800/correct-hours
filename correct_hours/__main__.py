@@ -4,7 +4,8 @@ from pathlib import Path
 
 from correct_hours.report_processors.myob import MyobReportProcessor
 from correct_hours.report_processors.xero import XeroReportProcessor
-from correct_hours.types import RateFileNotFound
+from correct_hours.types import RateFileNotFound, InvalidReportType, RATES_FILENAME, OUTPUT_FOLDER, \
+    HOURS_NEW_FILE_PREFIX
 
 parser = ArgumentParser()
 parser.add_argument("directory", help="Location of Excel files", type=str)
@@ -23,35 +24,32 @@ directory = args.directory
 report_type = args.report_type
 
 
-def get_new_file_name(filepath: str) -> str:
+def get_new_file_name(filepath: Path) -> str:
     path = Path(filepath)
-    return f"{path.parent.absolute()}/output/copy_{path.name}"
+    # Example: ~/correct-hours/examples/xero/output/copy_barney-stinson.xlsx
+    return f"{path.parent.absolute()}/{OUTPUT_FOLDER}/{HOURS_NEW_FILE_PREFIX}{path.name}"
 
 
 def should_ignore_file(file: Path) -> bool:
     filename = file.name
     return (
         str.startswith(filename, "~") or
-        filename == 'rates.xlsx'
+        filename == RATES_FILENAME
     )
 
 
-class InvalidReportType(Exception):
-    pass
-
-
 # create output folder
-Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
+Path(f"{directory}/{OUTPUT_FOLDER}").mkdir(parents=True, exist_ok=True)
 # iterate through files in input directory
 files = Path(directory).glob('*')
 for f in files:
     if f.is_file():
         if not should_ignore_file(f):
-            filepath = f.absolute()
-            print(f"Processing file {filepath}...")
-            workbook = load_workbook(filename=filepath)
+            hours_filepath = f.absolute()
+            print(f"Processing file {hours_filepath}...")
+            workbook = load_workbook(filename=hours_filepath)
             # load rates workbook
-            rates_filepath = f"{directory}/rates.xlsx"
+            rates_filepath = f"{directory}/{RATES_FILENAME}"
             if report_type == 'xero':
                 try:
                     rates_workbook = load_workbook(filename=rates_filepath)
@@ -61,8 +59,8 @@ for f in files:
             elif report_type == 'myob':
                 processor = MyobReportProcessor(workbook)
             else:
-                raise InvalidReportType(f"Invalid report type provided: {report_type}")
+                raise InvalidReportType(report_type)
             processor.process()
-            new_file_name = get_new_file_name(filepath)
-            workbook.save(filename=new_file_name)
-            print(f"Finished processing file. Created file {new_file_name}.")
+            hours_new_filename = get_new_file_name(hours_filepath)
+            workbook.save(filename=hours_new_filename)
+            print(f"Finished processing file. Created file {hours_new_filename}.")
