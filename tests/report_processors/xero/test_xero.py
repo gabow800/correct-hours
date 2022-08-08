@@ -96,3 +96,14 @@ def test_process_file() -> None:
         [corrected_hour[0] for corrected_hour in corrected_hours]
     )
 
+    # Assert that rates have been applied
+    assert_cell_values(new_sheet, [
+        ("R6", "=O6*25.52"),
+        ("R7", "=O7*36.24"),
+        ("R8", "=O8*48.32"),
+        ("R9", "=O9*25.52"),
+        ("R10", "=O10*25.52"),
+        ("R11", "=O11*36.24"),
+        ("R12", "=O12*25.52"),
+   ])
+

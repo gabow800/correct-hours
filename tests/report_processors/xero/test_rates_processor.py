@@ -8,3 +8,4 @@ def test_process_rates():
     processor = XeroRateProcessor(workbook)
     rates = processor.process()
     print(rates)
+    # TODO: implement test
