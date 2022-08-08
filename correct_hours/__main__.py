@@ -22,7 +22,7 @@ directory = args.directory
 report_type = args.report_type
 
 
-def get_new_file_name(filepath):
+def get_new_file_name(filepath: str) -> str:
     path = Path(filepath)
     return f"{path.parent.absolute()}/output/copy_{path.name}"
 
@@ -41,6 +41,7 @@ class InvalidReportType(Exception):
 
 # create output folder
 Path(f"{directory}/output").mkdir(parents=True, exist_ok=True)
+# iterate through files in input directory
 files = Path(directory).glob('*')
 for f in files:
     if f.is_file():

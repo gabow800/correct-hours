@@ -2,6 +2,10 @@ import dataclasses
 from datetime import datetime
 from typing import Optional
 
+from openpyxl import Workbook
+
+from correct_hours.report_processors.types import RateNotFound
+
 ROWS_OFFSET = 2
 COLS_OFFSET = 3
 
@@ -9,11 +13,11 @@ COLS_OFFSET = 3
 @dataclasses.dataclass
 class Rate:
     label: str
-    start_date: Optional[datetime.date]
-    end_date: Optional[datetime.date]
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
     rate: float
 
-    def is_within_date_range(self, date: datetime.date):
+    def is_within_date_range(self, date: datetime) -> bool:
         if self.start_date is None:
             return date < self.end_date
         if self.end_date is None:
@@ -23,14 +27,14 @@ class Rate:
 
 class XeroRateProcessor:
 
-    def __init__(self, workbook):
+    def __init__(self, workbook: Workbook) -> None:
         self.workbook = workbook
         self.rates = []
 
-    def process(self):
+    def process(self) -> None:
         return self.process_rows()
 
-    def process_rows(self):
+    def process_rows(self) -> None:
         sheet = self.workbook.active
         rates = []
         for row in sheet.iter_rows(min_row=ROWS_OFFSET, values_only=True):
@@ -38,6 +42,7 @@ class XeroRateProcessor:
             for col_idx, col in enumerate(row):
                 col_number = col_idx + 1
                 if col_number < COLS_OFFSET:
+                    # skip first columns
                     continue
                 elif col_number == COLS_OFFSET:
                     # oldest rate
@@ -56,11 +61,14 @@ class XeroRateProcessor:
                 )
         self.rates = rates
 
-    def get_rate(self, rate_label, date: datetime.date):
+    def get_rate(self, rate_label: str, date: datetime) -> int:
         matching_rates = [
-            r.rate for r in self.rates if r.label == rate_label and r.is_within_date_range(date)
+            r.rate for r in self.rates if str.lower(r.label) == str.lower(rate_label) and r.is_within_date_range(date)
         ]
-        return matching_rates[0] if matching_rates else None
+        if matching_rates:
+            return matching_rates[0]
+        else:
+            raise RateNotFound(rate_label, date)
 
 
 

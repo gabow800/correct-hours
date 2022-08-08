@@ -1,6 +1,8 @@
 from pathlib import Path
+from typing import Tuple, List
 
 from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 from correct_hours.report_processors.xero import XeroReportProcessor
 
@@ -8,7 +10,11 @@ HOUR_COLUMN_NAMES = ["G", "H", "I", "J", "K", "L", "M", "N"]
 HOUR_START_ROW = 6
 
 
-def assert_other_hours_should_be_the_same(old_sheet, new_sheet, skip_cells):
+def assert_other_hours_should_be_the_same(
+        old_sheet: Worksheet,
+        new_sheet: Worksheet,
+        skip_cells: List[str]
+) -> None:
     for col_name in HOUR_COLUMN_NAMES:
         for row_idx, row in enumerate(new_sheet.iter_rows(min_row=HOUR_START_ROW, values_only=True)):
             row_number = row_idx + HOUR_START_ROW
@@ -22,7 +28,11 @@ def assert_other_hours_should_be_the_same(old_sheet, new_sheet, skip_cells):
             )
 
 
-def assert_corrected_hours(old_sheet, new_sheet, corrected_cells):
+def assert_corrected_hours(
+        old_sheet: Worksheet,
+        new_sheet: Worksheet,
+        corrected_cells: List[Tuple[str, int, int]]
+) -> None:
     for corrected_cell in corrected_cells:
         cell_name, expected_old_value, expected_new_value = corrected_cell
         old_value = old_sheet[cell_name].value
@@ -32,13 +42,13 @@ def assert_corrected_hours(old_sheet, new_sheet, corrected_cells):
         assert new_value == expected_new_value
 
 
-def assert_cell_values(new_sheet, cells):
+def assert_cell_values(new_sheet: Worksheet, cells: List[Tuple[str, str]]) -> None:
     for cell in cells:
         cell_name, expected_value = cell
         assert new_sheet[cell_name].value == expected_value
 
 
-def test_process_file():
+def test_process_file() -> None:
     hours_workbook = load_workbook("tests/data/xero-report.xlsx")
     rates_workbook = load_workbook("tests/data/rates.xlsx")
     processor = XeroReportProcessor(hours_workbook, rates_workbook)
