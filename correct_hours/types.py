@@ -4,7 +4,7 @@ from datetime import datetime
 RATES_FILENAME = "rates.xlsx"
 OUTPUT_FOLDER = "output"
 HOURS_NEW_FILE_PREFIX = "copy_"
-
+ASCII_OFFSET = 64
 
 class CorrectHoursError(Exception):
     pass

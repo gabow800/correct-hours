@@ -4,20 +4,24 @@ from typing import Tuple, List
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from correct_hours.report_processors.xero import XeroReportProcessor
+from correct_hours.report_processors.xero import XeroReportProcessor, ROW_OFFSET
+from correct_hours.utils import get_col_number, get_col_name
 
-HOUR_COLUMN_NAMES = ["G", "H", "I", "J", "K", "L", "M", "N"]
 HOUR_START_ROW = 6
 
 
-def assert_other_hours_should_be_the_same(
+def assert_other_cells_should_be_the_same(
         old_sheet: Worksheet,
         new_sheet: Worksheet,
         skip_cells: List[str]
 ) -> None:
-    for col_name in HOUR_COLUMN_NAMES:
-        for row_idx, row in enumerate(new_sheet.iter_rows(min_row=HOUR_START_ROW, values_only=True)):
-            row_number = row_idx + HOUR_START_ROW
+    for row_idx, row in enumerate(new_sheet.iter_rows(min_row=ROW_OFFSET, values_only=True)):
+        row_number = row_idx + ROW_OFFSET
+        if row_number == new_sheet.max_row:
+            # skip bottom row
+            continue
+        for col_number in range(get_col_number("A"), get_col_number("N") + 1):
+            col_name = get_col_name(col_number)
             cell_name = f"{col_name}{row_number}"
             if cell_name in skip_cells:
                 continue
@@ -89,11 +93,12 @@ def test_process_file() -> None:
         ("K12", 8, 6),
     ]
     assert_corrected_hours(old_sheet, new_sheet, corrected_hours)
-    # Other hours should be the same
-    assert_other_hours_should_be_the_same(
+    # Other cells should be the same
+    skip_cells = [corrected_hour[0] for corrected_hour in corrected_hours]
+    assert_other_cells_should_be_the_same(
         old_sheet,
         new_sheet,
-        [corrected_hour[0] for corrected_hour in corrected_hours]
+        skip_cells
     )
 
     # Assert that rates have been applied

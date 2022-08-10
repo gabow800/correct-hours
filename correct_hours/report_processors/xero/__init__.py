@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 from correct_hours.report_processors.xero.rate_processor import XeroRateProcessor
+from correct_hours.utils import get_col_number, get_col_name
 
 ROW_OFFSET = 6
 
@@ -96,6 +97,19 @@ class XeroReportProcessor:
             days_worked_cell.style = 'Comma [0]'
 
             rows_processed_count += rows_added_count
+        # add total cells at the bottom
+        bottom_row = rows_processed_count + 1
+        for col_number in range(get_col_number("G"), get_col_number("R") + 1):
+            col_name = get_col_name(col_number)
+            self.hours_new_sheet.cell(
+                bottom_row,
+                col_number,
+                f"=SUM({col_name}{ROW_OFFSET}:{col_name}{rows_processed_count})"
+            ).style = "Total"
+        # self.hours_new_sheet.cell(bottom_row, 15, f"=SUM(O{ROW_OFFSET}:O{rows_processed_count})").style = "Total"
+        # self.hours_new_sheet.cell(bottom_row, 16, f"=SUM(P{ROW_OFFSET}:P{rows_processed_count})").style = "Total"
+        # self.hours_new_sheet.cell(bottom_row, 17, f"=SUM(Q{ROW_OFFSET}:Q{rows_processed_count})").style = "Total"
+        # self.hours_new_sheet.cell(bottom_row, 18, f"=SUM(R{ROW_OFFSET}:R{rows_processed_count})").style = "Total"
 
     def process(self) -> None:
         self.add_new_column_headings()
