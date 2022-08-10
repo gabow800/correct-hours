@@ -61,36 +61,20 @@ def test_process_file() -> None:
     hours_workbook.save(filename="tests/data/output/copy-xero-report.xlsx")
     old_sheet = hours_workbook["Timesheet Details"]
     new_sheet = hours_workbook["Timesheet Details Copy"]
-    # Asert old total, new total and days worked
-    assert_cell_values(new_sheet, [
-        # 1/12/2020 rows
-        ("O6", "=SUM(G6:M6)"),
-        ("O7", "=SUM(G7:M7)"),
-        ("O8", "=SUM(G8:M8)"),
-        ("P8", "=SUM(O6:O8)"),
-        ("Q8", "=P8/7.6"),
-        # 2/12/2020 rows
-        ("O9", "=SUM(G9:M9)"),
-        ("P9", "=SUM(O9:O9)"),
-        ("Q9", "=P9/7.6"),
-        # 3/12/2020 rows
-        ("O10", "=SUM(G10:M10)"),
-        ("O11", "=SUM(G11:M11)"),
-        ("P11", "=SUM(O10:O11)"),
-        ("Q11", "=P11/7.6"),
-        # 4/12/2020 rows
-        ("O12", "=SUM(G12:M12)"),
-        ("P12", "=SUM(O12:O12)"),
-        ("Q12", "=P12/7.6"),
-    ])
-    # Assert corrected hours process
+
+    # Assert corrected hours cells
     corrected_hours = [
         ("I8", 2, 0),
         ("I7", 2, 0),
         ("I6", 2, 0),
         ("H8", 2, 0),
         ("H7", 7, 6),
-        ("K12", 8, 6),
+        ("K13", 8, 6),
+        ("I16", 2, 0),
+        ("I15", 2, 0),
+        ("I14", 2, 0),
+        ("H16", 2, 0),
+        ("H15", 7, 6),
     ]
     assert_corrected_hours(old_sheet, new_sheet, corrected_hours)
     # Other cells should be the same
@@ -101,14 +85,43 @@ def test_process_file() -> None:
         skip_cells
     )
 
-    # Assert that rates have been applied
-    assert_cell_values(new_sheet, [
-        ("R6", "=O6*25.52"),
-        ("R7", "=O7*36.24"),
-        ("R8", "=O8*48.32"),
-        ("R9", "=O9*25.52"),
-        ("R10", "=O10*25.52"),
-        ("R11", "=O11*36.24"),
-        ("R12", "=O12*25.52"),
-   ])
+    # Assert "new total" column
+    for row_number in range(ROW_OFFSET, new_sheet.max_row):
+        assert_cell_values(new_sheet, [
+            (f"O{row_number}", f"=SUM(G{row_number}:M{row_number})"),
+        ])
+
+    # Asert "New total per day" and "Days worked" columns
+    rows_with_total = [
+        8,
+        9,
+        10,
+        12,
+        13,
+        16,
+    ]
+    previous_row_with_total = 6
+    for row_number in rows_with_total:
+        assert_cell_values(new_sheet, [
+            (f"P{row_number}", f"=SUM(O{previous_row_with_total}:O{row_number})"),
+            (f"Q{row_number}", f"=P{row_number}/7.6"),
+        ])
+        previous_row_with_total = row_number + 1
+
+    # Assert "Rates" column
+    expected_rates = [
+        "25.52",
+        "36.24",
+        "48.32",
+        "48.32",
+        "25.52",
+        "25.52",
+        "36.24",
+        "25.52",
+    ]
+    for rate_idx, rate in enumerate(expected_rates):
+        row_number = ROW_OFFSET + rate_idx
+        assert_cell_values(new_sheet, [
+            (f"R{row_number}", f"=O{row_number}*{rate}")
+        ])
 
