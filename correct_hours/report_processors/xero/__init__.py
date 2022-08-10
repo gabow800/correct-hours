@@ -25,12 +25,13 @@ class XeroReportProcessor:
         self.hours_new_sheet.cell(5, 17, "Days worked").font = Font(bold=True)
         self.hours_new_sheet.cell(5, 18, "Rates").font = Font(bold=True)
 
-    def add_up_hours_of_the_same_day(self, current_date: datetime, row_start: int) -> Tuple[int, int]:
+    def add_up_hours_of_the_same_day(self, current_date: datetime, current_employee: str, row_start: int) -> Tuple[int, int]:
         rows_added_count = 0
         total_hours = 0
         for row in self.hours_new_sheet.iter_rows(min_row=row_start, min_col=1, max_col=14, values_only=True):
             date = row[0]
-            if date != current_date:
+            employee = row[1]
+            if date != current_date or employee != current_employee:
                 break
             total = row[13]
             total_hours += total
@@ -78,7 +79,8 @@ class XeroReportProcessor:
             if row_number <= rows_processed_count:
                 # skip the rows of the same day
                 continue
-            rows_added_count, total_hours = self.add_up_hours_of_the_same_day(date, row_number)
+            employee = row[1]
+            rows_added_count, total_hours = self.add_up_hours_of_the_same_day(date, employee, row_number)
             # last row of the same day
             last_row_number = (row_number + rows_added_count) - 1
             did_overtime = False
