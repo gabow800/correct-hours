@@ -99,17 +99,16 @@ class XeroReportProcessor:
             rows_processed_count += rows_added_count
         # add total cells at the bottom
         bottom_row = rows_processed_count + 1
-        for col_number in range(get_col_number("G"), get_col_number("R") + 1):
-            col_name = get_col_name(col_number)
-            self.hours_new_sheet.cell(
-                bottom_row,
-                col_number,
-                f"=SUM({col_name}{ROW_OFFSET}:{col_name}{rows_processed_count})"
-            ).style = "Total"
-        # self.hours_new_sheet.cell(bottom_row, 15, f"=SUM(O{ROW_OFFSET}:O{rows_processed_count})").style = "Total"
-        # self.hours_new_sheet.cell(bottom_row, 16, f"=SUM(P{ROW_OFFSET}:P{rows_processed_count})").style = "Total"
-        # self.hours_new_sheet.cell(bottom_row, 17, f"=SUM(Q{ROW_OFFSET}:Q{rows_processed_count})").style = "Total"
-        # self.hours_new_sheet.cell(bottom_row, 18, f"=SUM(R{ROW_OFFSET}:R{rows_processed_count})").style = "Total"
+        self.hours_new_sheet.cell(
+            bottom_row,
+            get_col_number("Q"),
+            f"=SUM(Q{ROW_OFFSET}:Q{rows_processed_count})"
+        ).style = "Comma [0]"
+        self.hours_new_sheet.cell(
+            bottom_row,
+            get_col_number("R"),
+            f"=SUM(R{ROW_OFFSET}:R{rows_processed_count})"
+        ).style = "Currency"
 
     def process(self) -> None:
         self.add_new_column_headings()
