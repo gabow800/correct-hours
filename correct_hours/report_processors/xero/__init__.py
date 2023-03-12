@@ -61,7 +61,6 @@ class XeroReportProcessor:
         rate_processor.process()
         # start processing hour rows
         rows_processed_count = 0
-        empty_row_count = 0
         for row_idx, row in enumerate(
                 self.hours_new_sheet.iter_rows(min_row=1, min_col=1, max_col=14, values_only=True)
         ):
@@ -70,7 +69,6 @@ class XeroReportProcessor:
             if not row[0]:
                 # skip empty row
                 rows_processed_count += 1
-                empty_row_count += 1
                 continue
             if row_number < ROW_OFFSET:
                 # skip the header rows
