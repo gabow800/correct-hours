@@ -78,8 +78,7 @@ class XeroRateProcessor:
 
     def get_rate(self, rate_label: str, date: datetime) -> int:
         matching_rates = [
-            r.rate for r in self.rates if
-            str.lower(r.label) == str.lower(rate_label) and r.is_within_date_range(date)
+            r.rate for r in self.rates if str.lower(r.label) == str.lower(rate_label) and r.is_within_date_range(date)
         ]
         if matching_rates:
             return matching_rates[0]
