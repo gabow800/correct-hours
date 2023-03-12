@@ -5,7 +5,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 from correct_hours.report_processors.xero.rate_processor import XeroRateProcessor
-from correct_hours.utils import get_col_number, get_col_name
+from correct_hours.types import InvalidRateLabel
+from correct_hours.utils import get_col_number, trim_rate_label
 
 ROW_OFFSET = 6
 
@@ -60,20 +61,31 @@ class XeroReportProcessor:
         rate_processor.process()
         # start processing hour rows
         rows_processed_count = 0
+        empty_row_count = 0
         for row_idx, row in enumerate(
                 self.hours_new_sheet.iter_rows(min_row=1, min_col=1, max_col=14, values_only=True)
         ):
             row_number = row_idx + 1
+            # validating row
+            if not row[0]:
+                # skip empty row
+                rows_processed_count += 1
+                empty_row_count += 1
+                continue
             if row_number < ROW_OFFSET:
                 # skip the header rows
                 rows_processed_count += 1
                 continue
+            rate_label = row[3]
+            rate_label_trimmed = trim_rate_label(rate_label)
+            if not rate_label_trimmed:
+                raise InvalidRateLabel(rate_label, row_number)
+
             # add new total
             self.hours_new_sheet.cell(row_number, 15, f"=SUM(G{row_number}:M{row_number})")
             # apply rate
             date = row[0]
-            rate_label = row[3]
-            rate = rate_processor.get_rate(rate_label, date)
+            rate = rate_processor.get_rate(rate_label_trimmed, date)
             rate_cell = self.hours_new_sheet.cell(row_number, 18, f"=O{row_number}*{rate}")
             rate_cell.style = 'Currency'
             if row_number <= rows_processed_count:
