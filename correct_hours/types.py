@@ -19,6 +19,16 @@ class UnsupportedReportType(CorrectHoursError):
 
 
 @dataclasses.dataclass
+class InvalidRateLabel(CorrectHoursError):
+    rate_label: str
+    row_number: int
+
+    def __str__(self) -> str:
+        return (
+            f"Invalid rate label on row {self.row_number}: \"{self.rate_label}\"."
+        )
+
+@dataclasses.dataclass
 class RateNotFound(CorrectHoursError):
     rate_label: str
     date: datetime
