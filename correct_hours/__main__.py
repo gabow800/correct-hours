@@ -2,12 +2,14 @@ from openpyxl import load_workbook
 from argparse import ArgumentParser
 from pathlib import Path
 
+from correct_hours import __version__
 from correct_hours.report_processors.myob import MyobReportProcessor
 from correct_hours.report_processors.xero import XeroReportProcessor
 from correct_hours.types import RateFileNotFound, InvalidReportType, RATES_FILENAME, OUTPUT_FOLDER, \
     HOURS_NEW_FILE_PREFIX
 
 parser = ArgumentParser()
+parser.add_argument('-v', '--version', action='version', version=__version__)
 parser.add_argument("directory", help="Location of Excel files", type=str)
 parser.add_argument(
     "-t",
@@ -18,7 +20,6 @@ parser.add_argument(
     default="xero",
     choices=['xero', 'myob']
 )
-
 args = parser.parse_args()
 directory = args.directory
 report_type = args.report_type

@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "correct-hours"
-version = "1.0.3"
+version = "1.2.0"
 description = ""
 authors = ["Jose Orozco"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 openpyxl = "^3.0.10"
+single-source = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
